@@ -1,0 +1,9 @@
+timers can be used for async
+
+by adding listeners on each timer set to the smallest intervals possible and a stack for pending timer signals user input can be queued and engine output can be queued
+
+this should allow the ui and engine to run async
+
+needs two timers
+
+dont forget to stop timers if needed
