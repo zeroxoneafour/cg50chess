@@ -1,5 +1,6 @@
 # Don't version compiled binaries
 *.o
 *.a
+*.d
 *.bin
 *.g3a
