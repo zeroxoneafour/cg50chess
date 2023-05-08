@@ -7,4 +7,4 @@ int main() {
     GetKey(&key); // Loop forever
 
   return 0; // Needed if you have main returning int, but will never be reached.
-}:
+};
