@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv) {
     bb_init();
-    prng_seed(time(NULL));
+    prng_seed(clock());
     uci_main();
     return 0;
 }

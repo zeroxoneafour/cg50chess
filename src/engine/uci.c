@@ -6,13 +6,13 @@
 #include "move.h"
 #include "perft.h"
 #include "search.h"
-#include "tinycthread.h"
 #include "uci.h"
 #include "util.h"
 
+#include <fxcg/system.h>
+
 static Board board;
 static Search search;
-static thrd_t thrd;
 
 void handle_uci() {
     printf("id name Mister Queen\n");
@@ -50,7 +50,7 @@ static int thread_func(void *arg) {
 }
 
 static void thread_start() {
-    thrd_create(&thrd, thread_func, NULL);
+    Timer_Install(&thrd, thread_func, NULL);
 }
 
 void handle_go(char *line) {
@@ -81,51 +81,47 @@ void handle_stop() {
     thrd_join(thrd, NULL);
 }
 
-int parse_line() {
-    char data[1024];
-    if (fgets(data, 1024, stdin) == NULL) {
-        return 0;
-    }
-    char *line = strip(data);
-    if (strcmp(line, "uci") == 0) {
+int parse_line(enum uci_commands uci_in, char* data) {
+    if (uci_in == uci) {
         handle_uci();
     }
-    if (strcmp(line, "isready") == 0) {
+    if (uci_in == isready) {
         handle_isready();
     }
-    if (strcmp(line, "position startpos") == 0) {
+    if (uci_in == position_startpos) {
         handle_startpos();
     }
-    if (starts_with(line, "position startpos moves ")) {
-        handle_startpos_moves(line + 24);
+    if (uci_in == position_startpos_moves) {
+        handle_startpos_moves(data);
     }
-    if (starts_with(line, "position fen ")) {
-        handle_fen(line + 13);
+    if (uci_in == position_fen) {
+        handle_fen(data);
     }
-    if (starts_with(line, "go")) {
-        handle_go(line);
+    if (uci_in == go) {
+        handle_go(data);
     }
-    if (strcmp(line, "stop") == 0) {
+    if (uci_in == stop) {
         handle_stop();
     }
-    if (strcmp(line, "quit") == 0) {
+    if (uci_in == quit) {
         return 0;
     }
-    if (strcmp(line, "perft") == 0) {
+    if (uci_in == uci_perft) {
         perft_tests();
     }
-    if (strcmp(line, "bk") == 0) {
+    if (uci_in == bk) {
         bk_tests();
     }
-    int index;
-    if (sscanf(line, "test %d", &index) == 1) {
-        test_position(index);
+    if (uci_in == test) {
+        test_position(atoi(data));
     }
     return 1;
 }
 
+/*
 void uci_main() {
     setbuf(stdout, NULL);
     board_reset(&board);
     while (parse_line());
 }
+*/
